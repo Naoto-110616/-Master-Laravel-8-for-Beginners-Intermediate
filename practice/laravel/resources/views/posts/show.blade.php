@@ -1,8 +1,8 @@
 @extends("layouts.app")
 
-@section("title",$posts["title"])
+@section("title",$post["title"])
 
 @section("content")
-<h1>{{ $posts["title"] }}</h1>
-<p>{{ $posts["content"] }}</p>
+<h1>{{ $post["title"] }}</h1>
+<p>{{ $post["content"] }}</p>
 @endsection
