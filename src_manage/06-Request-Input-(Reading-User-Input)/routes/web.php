@@ -47,7 +47,8 @@ $posts = [
 
 Route::get("/posts", function () use ($posts) {
     // dd(request()->all());
-    dd((int)request()->query("page", 1));
+    dd((int)request()->input("page", 1));
+    // dd((int)request()->query("page", 1));
     return view("posts.index", ["posts" => $posts]);
 });
 
