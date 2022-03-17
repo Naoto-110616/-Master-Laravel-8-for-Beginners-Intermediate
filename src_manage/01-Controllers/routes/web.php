@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,9 +22,10 @@ use Illuminate\Support\Facades\Route;
 //     return view("home.contact");
 // })->name("home.contact");
 
-Route::view("/", "home.index")
+Route::get("/", [HomeController::class, "home"])
     ->name("home.index");
-Route::view("/contact", "home.contact")
+
+Route::get("/contact", [HomeController::class, "contact"])
     ->name("home.contact");
 
 $posts = [
@@ -46,6 +48,8 @@ $posts = [
 ];
 
 Route::get("/posts", function () use ($posts) {
+    // dd(request()->all());
+    dd((int)request()->query("page", 1));
     return view("posts.index", ["posts" => $posts]);
 });
 
@@ -64,8 +68,35 @@ Route::get("/recent-posts/{days_ago?}", function ($daysAgo = 20) {
     return "Post from " . $daysAgo . " days ago";
 })->name("posts.recent.index");
 
-Route::get("/fun/responses", function () use ($posts) {
-    return response($posts, 201)
-        ->header("Content-Type", "application/json")
-        ->cookie("MY_COOKIE", "Piotr Jura", 3600);
+Route::prefix("/fun")->name("fun.")->group(function () use ($posts) {
+
+    Route::get("responses", function () use ($posts) {
+        return response($posts, 201)
+            ->header("Content-Type", "application/json")
+            ->cookie("MY_COOKIE", "Piotr Jura", 3600);
+    })->name("responses");
+
+    Route::get("redirect", function () {
+        return redirect("/contact");
+    })->name("redirect");
+
+    Route::get("back", function () {
+        return back();
+    })->name("back");
+
+    Route::get("named-route", function () {
+        return redirect()->route("posts.show", ["id" => 1]);
+    })->name("named-route");
+
+    Route::get("away", function () {
+        return redirect()->away("https://google.com");
+    })->name("away");
+
+    Route::get("json", function () use ($posts) {
+        return response()->json($posts);
+    })->name("json");
+
+    Route::get("download", function () {
+        return response()->download(public_path("/daniel.jpg"), "face.jpg");
+    })->name("download");
 });
